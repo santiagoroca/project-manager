@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    </head>
+
+    <body>
+    </body>
+
+    <script>
+
+        var domain = location.origin;
+
+        Promise.all([
+            new Promise (function (resolve, reject) {
+                var script = document.createElement('script');
+                script.type = "text\/javascript";
+                script.src = domain + '/webpack-dev-server.js';
+                script.onload = resolve;
+                document.getElementsByTagName ('body') [0].appendChild(script);
+            }),
+            new Promise (function (resolve, reject) {
+                var script = document.createElement('script');
+                script.type = "text\/javascript";
+                script.src = domain + '/dist/my-project.min.js';
+                script.onload = resolve;
+                document.getElementsByTagName ('body') [0].appendChild(script);
+            })
+        ]).then(function () {
+            new MyProject.default();
+        });
+
+    </script>
+
+</html>
