@@ -8,18 +8,6 @@ import { mat4, vec3 } from './lib/glmatrix';
 class WebGL {
 
     constructor (container) {
-
-        this.isLeftClickPressed = false;
-        this.isRightClickPressed = false;
-        this.alpha = Math.PI / 4;
-        this.theta = Math.PI / 4;
-        this.firstMousex = 0;
-        this.firstMousey = 0;
-        this.lastMousex = 0;
-        this.lastMousey = 0;
-        this.offset = 5;
-        this.target = [0, 0, 0];
-
         //Creates the canvas in which the viewer will be rendered
         this.canvas = document.createElement('canvas');
 
@@ -94,7 +82,7 @@ class WebGL {
             -1.0, -1.0, -1.0,
             1.0, -1.0, -1.0,
             1.0,  1.0, -1.0,
-            -1.0,  1.0, -1.0
+            -1.0,  1.0, -1.0,
 
         ]).buffer, this.webgl.STATIC_DRAW);
 
@@ -112,7 +100,7 @@ class WebGL {
             1.0, 0.0, 0.0, 1.0,
             0.0, 1.0, 0.0, 1.0,
             0.0, 0.0, 1.0, 1.0,
-            1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0
 
         ]).buffer, this.webgl.STATIC_DRAW);
 
@@ -142,7 +130,7 @@ class WebGL {
 
             // right
             3, 2, 6,
-            6, 7, 3
+            6, 7, 3,
 
         ]).buffer, this.webgl.STATIC_DRAW);
 
@@ -152,15 +140,6 @@ class WebGL {
 
         //Render the scene the first time
         requestAnimationFrame(this.updateMVP.bind(this));
-
-        //DOM Events
-        this.canvas.oncontextmenu = function () {
-            return false;
-        };
-
-        this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
-        this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
-        this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
     }
 
     render () {
@@ -175,90 +154,21 @@ class WebGL {
 
         this.webgl.bindBuffer(this.webgl.ELEMENT_ARRAY_BUFFER, this.facesBuffer);
         this.webgl.drawElements(this.webgl.TRIANGLES, 36, this.webgl.UNSIGNED_INT, 0);
+
+        requestAnimationFrame(this.render.bind(this));
     }
 
     updateMVP () {
         let _mvMatrix = mat4.identity(mat4.create());
 
-        _mvMatrix = mat4.rotate(_mvMatrix, _mvMatrix, this.alpha, [_mvMatrix[1], _mvMatrix[5], _mvMatrix[9]]);
-        _mvMatrix = mat4.rotate(_mvMatrix, _mvMatrix, this.theta, [_mvMatrix[0], _mvMatrix[4], _mvMatrix[8]]);
-
-        _mvMatrix = mat4.translate(_mvMatrix, _mvMatrix, this.target);
-
-        if (this.offset != 0) {
-            var vec = [_mvMatrix[2], _mvMatrix[6], _mvMatrix[10]];
-            var vLength = Math.sqrt(
-                _mvMatrix[2] * _mvMatrix[2] +
-                _mvMatrix[6] * _mvMatrix[6] +
-                _mvMatrix[10] * _mvMatrix[10]
-            );
-
-            vec [0] /= vLength;
-            vec [1] /= vLength;
-            vec [2] /= vLength;
-
-            vec [0] *= -this.offset;
-            vec [1] *= -this.offset;
-            vec [2] *= -this.offset;
-
-            _mvMatrix = mat4.translate(_mvMatrix, _mvMatrix, vec);
-        }
+        _mvMatrix = mat4.translate(_mvMatrix, _mvMatrix, [
+            0, 0, -5
+        ]);
 
         var pMVPMatrixUniform = [];
         mat4.multiply (pMVPMatrixUniform, this.pMatrix, _mvMatrix);
         this.webgl.uniformMatrix4fv(this.shaderProgram.pPMVatrixUniform, false, pMVPMatrixUniform);
-        this.mvMatrix = _mvMatrix;
-
         requestAnimationFrame(this.render.bind(this));
-    }
-
-    onMouseDown (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        this.lastMousex = e.x;
-        this.lastMousey = e.y;
-
-        this.isLeftClickPressed = e.button === 0;
-        this.isRightClickPressed = e.button === 2;
-
-        this.firstMousex = e.x;
-        this.firstMousey = e.y;
-    }
-
-    onMouseMove (e) {
-
-        //Orbit
-        if (this.isLeftClickPressed) {
-
-            this.alpha -= (this.lastMousex - e.x) * .005;
-            this.theta -= (this.lastMousey - e.y) * .005;
-
-            this.theta = Math.max(Math.min(this.theta, Math.PI / 2), -Math.PI / 2);
-            this.alpha = Math.abs(this.alpha) > Math.PI * 2 ? this.alpha % Math.PI * 2 : this.alpha;
-
-            //Pan
-        } else if (this.isRightClickPressed) {
-
-            let right = vec3.normalize([], [this.mvMatrix[0], this.mvMatrix[4], this.mvMatrix[8]]);
-            right = vec3.scale(right, right, -(this.lastMousex - e.x) * .005);
-
-            let up = vec3.normalize([], [this.mvMatrix[1], this.mvMatrix[5], this.mvMatrix[9]]);
-            up = vec3.scale(up, up, -(this.lastMousey - e.y) * .005);
-
-            this.target = vec3.add([], this.target, vec3.add([], right, up));
-
-        }
-
-        this.updateMVP();
-
-        this.lastMousex = e.x;
-        this.lastMousey = e.y;
-    }
-
-    onMouseUp () {
-        this.isLeftClickPressed = false;
-        this.isRightClickPressed = false;
     }
 
 }
