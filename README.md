@@ -8,14 +8,24 @@ npm install -g project-templates
 
 ### Using
 
-Available options for the CLI
+  Usage: pm [options] [command] [command_options]
 
-* -h, --help [Displays available options]
-* -n, --name [Defines the project Name]
+  Options:
 
-```
-pm create es6 --name project-name
-```
+    -V, --version      output the version number
+    -n, --name [name]  Project Name
+    -h, --help         output usage information
+
+    Commands:
+
+      es6 [options]
+      es6-webgl
+
+  es6 Options:
+
+        -l, --library  Compiles the project as a library
+        -h, --help     output usage information
+
 
 ## Authors
 

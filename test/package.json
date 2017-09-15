@@ -1,0 +1,30 @@
+{
+
+  "name": "my-projects",
+
+  "version": "1.0.0",
+
+  "description": "",
+
+  "main": "build/my-pr.js",
+
+  "scripts": {
+    "start": "./node_modules/.bin/webpack-dev-server --no-inline",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "author": "",
+
+  "license": "ISC",
+
+  "devDependencies": {
+    "babel-loader": "^7.1.2",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "2.6.1"
+  },
+
+  "dependencies": {
+    "commander": "^2.11.0"
+  }
+
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        
+            <style>html, body, div {width: 100%; height: 100%; margin: 0;}</style>
+        
+    </head>
+
+    <body>
+        
+            <div id="viewer-container"></div>
+        
+    </body>
+
+    <script>
+
+        var domain = location.origin;
+
+        Promise.all([
+            new Promise (function (resolve, reject) {
+                var script = document.createElement('script');
+                script.type = "text\/javascript";
+                script.src = domain + '/webpack-dev-server.js';
+                script.onload = resolve;
+                document.getElementsByTagName ('body') [0].appendChild(script);
+            }),
+            new Promise (function (resolve, reject) {
+                var script = document.createElement('script');
+                script.type = "text\/javascript";
+                script.src = domain + '/dist/test.min.js';
+                script.onload = resolve;
+                document.getElementsByTagName ('body') [0].appendChild(script);
+            })
+        ]).then(function () {
+            new test.default(document.getElementById("viewer-container"));
+        });
+
+    </script>
+
+</html>

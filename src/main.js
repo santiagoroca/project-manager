@@ -10,17 +10,6 @@ class Main {
         commander.version('')
             .option('-n, --name [name]', 'Project Name');
 
-        commander
-            .command('es6')
-            .action(function (language) {
-                es6.execute(commander);
-            });
-
-        commander
-            .command('es6-webgl')
-            .action(function (language) {
-                es6WebGL.execute(commander);
-            });
 
         //Initialize
         let es6 = new ES6(commander);
